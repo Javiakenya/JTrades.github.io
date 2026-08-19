@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>JTrades</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#050b08;color:#fff}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid #00ff66}
+.navbar nav a{color:#ddd;text-decoration:none;margin:0 12px}
+.wrap{padding:20px}
+.ticker,.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.card,.panel{background:#0b1110;border:1px solid #183523;border-radius:14px;padding:15px;box-shadow:0 0 15px rgba(0,255,102,.12)}
+.hero{margin:20px 0;padding:30px;border-radius:16px;background:linear-gradient(90deg,#041,#0a1)}
+.hero h1{color:#00ff66}
+.main{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+#chart{height:520px}
+input,select{width:100%;padding:10px;margin:8px 0;background:#111;color:#fff;border:1px solid #333}
+button{cursor:pointer}
+.buy{background:#00ff66;color:#000;font-weight:bold;padding:14px;border:none;width:100%;border-radius:8px}
+.sell{background:#ff4d4d;color:#fff;font-weight:bold;padding:14px;border:none;width:100%;border-radius:8px;margin-top:8px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid #222;text-align:left}
+@media(max-width:900px){.main{grid-template-columns:1fr}}
+</style>
+<script src="https://s3.tradingview.com/tv.js"></script>
+</head>
+<body>
+<header class="navbar">
+<h2>JTrades</h2>
+<nav>
+<a href="#">Dashboard</a><a href="#">Markets</a><a href="#">Trade</a>
+<a href="#">Portfolio</a><a href="#">History</a><a href="#">Analytics</a>
+</nav>
+</header>
+
+<div class="wrap">
+
+<div class="ticker">
+<div class="card"><b>BTC/USD</b><h3 id="btc">Loading...</h3></div>
+<div class="card"><b>ETH/USD</b><h3 id="eth">Loading...</h3></div>
+<div class="card"><b>EUR/USD</b><h3>1.0856</h3></div>
+<div class="card"><b>GBP/USD</b><h3>1.2764</h3></div>
+<div class="card"><b>USD/JPY</b><h3>149.32</h3></div>
+</div>
+
+<div class="hero">
+<h1>Welcome to JTrades</h1>
+<p>Professional Trading Platform for Everyone</p>
+</div>
+
+<div class="stats">
+<div class="card">Account Balance<br><h2>$10,000</h2></div>
+<div class="card">Equity<br><h2>$10,248</h2></div>
+<div class="card">Open P/L<br><h2 style="color:#00ff66">+$248</h2></div>
+<div class="card">Margin<br><h2>$0</h2></div>
+</div>
+
+<br>
+
+<div class="main">
+<div class="panel"><div id="chart"></div></div>
+
+<div>
+<div class="panel">
+<h3>Trade Panel</h3>
+<select><option>BTC/USD</option><option>ETH/USD</option></select>
+<input placeholder="Amount">
+<input placeholder="Price">
+<button class="buy">Buy</button>
+<button class="sell">Sell</button>
+</div>
+
+<br>
+
+<div class="panel">
+<h3>Open Positions</h3>
+<table>
+<tr><th>Pair</th><th>Size</th><th>P/L</th></tr>
+<tr><td>BTC/USD</td><td>0.01</td><td style="color:#00ff66">+$128.76</td></tr>
+<tr><td>ETH/USD</td><td>0.50</td><td style="color:#00ff66">+$45.32</td></tr>
+</table>
+</div>
+
+<br>
+
+<div class="panel">
+<h3>Trade History</h3>
+<table>
+<tr><th>Pair</th><th>Type</th></tr>
+<tr><td>BTC/USD</td><td>Buy</td></tr>
+<tr><td>ETH/USD</td><td>Sell</td></tr>
+</table>
+</div>
+</div>
+</div>
+
+<br>
+
+<div class="panel">
+<h3>Market Watch</h3>
+<table>
+<tr><th>Symbol</th><th>Price</th><th>Action</th></tr>
+<tr><td>BTC/USD</td><td id="btc2">...</td><td><button class="buy">Buy</button></td></tr>
+<tr><td>ETH/USD</td><td id="eth2">...</td><td><button class="buy">Buy</button></td></tr>
+</table>
+</div>
+
+</div>
+
+<script>
+new TradingView.widget({
+container_id:"chart",
+width:"100%",
+height:520,
+symbol:"BINANCE:BTCUSDT",
+interval:"60",
+theme:"dark",
+style:"1"
+});
+
+async function loadPrices(){
+try{
+const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd');
+const d=await r.json();
+btc.innerText='$'+d.bitcoin.usd;
+eth.innerText='$'+d.ethereum.usd;
+btc2.innerText='$'+d.bitcoin.usd;
+eth2.innerText='$'+d.ethereum.usd;
+}catch(e){}
+}
+loadPrices();
+setInterval(loadPrices,30000);
+</script>
+</body></html>
