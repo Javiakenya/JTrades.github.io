@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JTrades</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#050b08;color:#fff}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #0f3}
+.navbar nav a{color:#ddd;text-decoration:none;margin:0 12px}
+.container{padding:20px}
+.ticker{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.card,.panel{background:#0b1110;border:1px solid #1c2d25;border-radius:14px;padding:15px;box-shadow:0 0 12px rgba(0,255,102,.15)}
+.hero{margin:20px 0;padding:30px;background:linear-gradient(90deg,#071,#020);border-radius:16px}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+#tvchart{height:520px}
+.buybtn{width:100%;padding:14px;background:#00ff66;border:none;font-weight:bold;border-radius:8px}
+input{width:100%;padding:10px;background:#111;border:1px solid #333;color:#fff;margin:8px 0}
+table{width:100%;border-collapse:collapse}
+td,th{padding:8px;border-bottom:1px solid #222;text-align:left}
+</style>
+<script src="https://s3.tradingview.com/tv.js"></script>
+</head>
+<body>
+<header class="navbar">
+<h2>JTrades</h2>
+<nav>
+<a>Dashboard</a><a>Markets</a><a>Trade</a><a>Portfolio</a><a>History</a><a>Analytics</a>
+</nav>
+</header>
+
+<div class="container">
+<div class="ticker">
+<div class="card">BTC/USD<br><h3 id="btc">Loading...</h3></div>
+<div class="card">ETH/USD<br><h3 id="eth">Loading...</h3></div>
+<div class="card">EUR/USD<br><h3>1.0856</h3></div>
+<div class="card">GBP/USD<br><h3>1.2764</h3></div>
+</div>
+
+<div class="hero">
+<h1>Welcome to JTrades</h1>
+<p>Professional Trading Platform for Everyone</p>
+</div>
+
+<div class="grid">
+<div class="panel">
+<div id="tvchart"></div>
+</div>
+
+<div>
+<div class="panel">
+<h3>Buy BTC</h3>
+<input type="number" placeholder="Amount BTC">
+<input type="number" placeholder="Price USD">
+<button class="buybtn">Buy BTC</button>
+</div>
+
+<br>
+
+<div class="panel">
+<h3>Open Positions</h3>
+<table>
+<tr><th>Pair</th><th>P/L</th></tr>
+<tr><td>BTC/USD</td><td>+$128.76</td></tr>
+<tr><td>ETH/USD</td><td>+$45.32</td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+new TradingView.widget({
+container_id:"tvchart",
+width:"100%",
+height:520,
+symbol:"BINANCE:BTCUSDT",
+interval:"60",
+theme:"dark",
+style:"1"
+});
+
+async function prices(){
+try{
+let r=await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd");
+let d=await r.json();
+btc.innerText="$"+d.bitcoin.usd;
+eth.innerText="$"+d.ethereum.usd;
+}catch(e){}
+}
+prices();
+setInterval(prices,30000);
+</script>
+</body>
+</html>
